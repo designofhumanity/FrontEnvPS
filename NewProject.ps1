@@ -27,82 +27,7 @@ $Body = @{
 $result =Invoke-RestMethod -Headers $Headers -Uri https://api.github.com/user/repos -Body $Body -Method post | Format-Wide -Property clone_url -Column 1 | out-string
 #| Select-String -Pattern "https://github.com/*"
 $result = $result.trim()
-#id                : 59658000
-#name              : PROJECTNAME
-#full_name         : AUTHOR/PROJECTNAME
-#owner             : @{login=AUTHOR; id=2714036; avatar_url=https://avatars.githubusercontent.com/u/2714036?v=3; gravatar_id=; url=https://api.github.com/users/AUTHOR;
-#                    html_url=https://github.com/AUTHOR; followers_url=https://api.github.com/users/AUTHOR/followers;
-#                    following_url=https://api.github.com/users/AUTHOR/following{/other_user}; gists_url=https://api.github.com/users/AUTHOR/gists{/gist_id};
-#                    starred_url=https://api.github.com/users/AUTHOR/starred{/owner}{/repo}; subscriptions_url=https://api.github.com/users/AUTHOR/subscriptions;
-#                    organizations_url=https://api.github.com/users/AUTHOR/orgs; repos_url=https://api.github.com/users/AUTHOR/repos;
-#                    events_url=https://api.github.com/users/AUTHOR/events{/privacy}; received_events_url=https://api.github.com/users/AUTHOR/received_events; type=User; site_admin
-#private           : False
-#html_url          : https://github.com/AUTHOR/PROJECTNAME
-#description       : test 9
-#fork              : False
-#url               : https://api.github.com/repos/AUTHOR/PROJECTNAME
-#forks_url         : https://api.github.com/repos/AUTHOR/PROJECTNAME/forks
-#keys_url          : https://api.github.com/repos/AUTHOR/PROJECTNAME/keys{/key_id}
-#collaborators_url : https://api.github.com/repos/AUTHOR/PROJECTNAME/collaborators{/collaborator}
-#teams_url         : https://api.github.com/repos/AUTHOR/PROJECTNAME/teams
-#hooks_url         : https://api.github.com/repos/AUTHOR/PROJECTNAME/hooks
-#issue_events_url  : https://api.github.com/repos/AUTHOR/PROJECTNAME/issues/events{/number}
-#events_url        : https://api.github.com/repos/AUTHOR/PROJECTNAME/events
-#assignees_url     : https://api.github.com/repos/AUTHOR/PROJECTNAME/assignees{/user}
-#branches_url      : https://api.github.com/repos/AUTHOR/PROJECTNAME/branches{/branch}
-#tags_url          : https://api.github.com/repos/AUTHOR/PROJECTNAME/tags
-#blobs_url         : https://api.github.com/repos/AUTHOR/PROJECTNAME/git/blobs{/sha}
-#git_tags_url      : https://api.github.com/repos/AUTHOR/PROJECTNAME/git/tags{/sha}
-#git_refs_url      : https://api.github.com/repos/AUTHOR/PROJECTNAME/git/refs{/sha}
-#trees_url         : https://api.github.com/repos/AUTHOR/PROJECTNAME/git/trees{/sha}
-#statuses_url      : https://api.github.com/repos/AUTHOR/PROJECTNAME/statuses/{sha}
-#languages_url     : https://api.github.com/repos/AUTHOR/PROJECTNAME/languages
-#stargazers_url    : https://api.github.com/repos/AUTHOR/PROJECTNAME/stargazers
-#contributors_url  : https://api.github.com/repos/AUTHOR/PROJECTNAME/contributors
-#subscribers_url   : https://api.github.com/repos/AUTHOR/PROJECTNAME/subscribers
-#subscription_url  : https://api.github.com/repos/AUTHOR/PROJECTNAME/subscription
-#commits_url       : https://api.github.com/repos/AUTHOR/PROJECTNAME/commits{/sha}
-#git_commits_url   : https://api.github.com/repos/AUTHOR/PROJECTNAME/git/commits{/sha}
-#comments_url      : https://api.github.com/repos/AUTHOR/PROJECTNAME/comments{/number}
-#issue_comment_url : https://api.github.com/repos/AUTHOR/PROJECTNAME/issues/comments{/number}
-#contents_url      : https://api.github.com/repos/AUTHOR/PROJECTNAME/contents/{+path}
-#compare_url       : https://api.github.com/repos/AUTHOR/PROJECTNAME/compare/{base}...{head}
-#merges_url        : https://api.github.com/repos/AUTHOR/PROJECTNAME/merges
-#archive_url       : https://api.github.com/repos/AUTHOR/PROJECTNAME/{archive_format}{/ref}
-#downloads_url     : https://api.github.com/repos/AUTHOR/PROJECTNAME/downloads
-#issues_url        : https://api.github.com/repos/AUTHOR/PROJECTNAME/issues{/number}
-#pulls_url         : https://api.github.com/repos/AUTHOR/PROJECTNAME/pulls{/number}
-#milestones_url    : https://api.github.com/repos/AUTHOR/PROJECTNAME/milestones{/number}
-#notifications_url : https://api.github.com/repos/AUTHOR/PROJECTNAME/notifications{?since,all,participating}
-#labels_url        : https://api.github.com/repos/AUTHOR/PROJECTNAME/labels{/name}
-#releases_url      : https://api.github.com/repos/AUTHOR/PROJECTNAME/releases{/id}
-#deployments_url   : https://api.github.com/repos/AUTHOR/PROJECTNAME/deployments
-#created_at        : 2016-05-25T11:36:32Z
-#updated_at        : 2016-05-25T11:36:32Z
-#pushed_at         : 2016-05-25T11:36:33Z
-#git_url           : git://github.com/AUTHOR/PROJECTNAME.git
-#ssh_url           : git@github.com:AUTHOR/PROJECTNAME.git
-#clone_url         : https://github.com/AUTHOR/PROJECTNAME.git
-#svn_url           : https://github.com/AUTHOR/PROJECTNAME
-#homepage          :
-#size              : 0
-#stargazers_count  : 0
-#watchers_count    : 0
-#language          :
-#has_issues        : True
-#has_downloads     : True
-#has_wiki          : True
-#has_pages         : False
-#forks_count       : 0
-#mirror_url        :
-#open_issues_count : 0
-#forks             : 0
-#open_issues       : 0
-#watchers          : 0
-#default_branch    : master
-#permissions       : @{admin=True; push=True; pull=True}
-#network_count     : 0
-#subscribers_count : 1
+
 If (-Not (Test-Path .\$ProjectName))
 {
 
@@ -166,8 +91,8 @@ gulp watch
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUDlDZOuPgbU2C8gCu+9eg6Zj+
-# qhKgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUTbuC9EiWqBomhNPYFJ8y7H9U
+# fAygggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -188,11 +113,11 @@ gulp watch
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFDYgk734n8Jz/ap6ek8jETcm/RLGMA0GCSqG
-# SIb3DQEBAQUABIIBAHarhYgBD8CnMOrMY0zPqlHJXCfgYYY0KXeXbM7m+KUY9JkT
-# jnSgSuXDGZTpp1pv3oyVRgvBh/KcZ1ytbEpKFVp18fmwMiezKzBQuVjcP+toUpPL
-# ETXpNsoCZI50LopBBjHyGC8Xi6maQ3+F9tTFZEvlvmxYzMcBP5BIYrdPvu0WJypJ
-# 6ZoCe7XGlGLmIHxenGwhYNW2M+rJEPmxkeXirNO5xFz4PcwyS+sGfCsStWufYpW7
-# Bs47Lwo1ZpvKubpylDhmkey6trwddGIo1BGMsGftlMV8JjUZEQv8DSds6kxU3p8K
-# 7UpWukW3sL1n4gt7I4bCA0kdCUKhN6BhZaxNM3s=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFAilzZfOyRjb+oT7MMSrIWHZGKn5MA0GCSqG
+# SIb3DQEBAQUABIIBAIKQ01Llw/NLm9jsz0+mQGhg5/iY0QJ1EJHgnbIszPN95LXM
+# uJPKE/KDfZJ9AFrX0+M2tJEjjPNlsncoFpVFZO2vxPQUcjOsu2A+Hdmp+m/pnJAC
+# m9sS9+DiQY7a5+sNd6yed21FQdMv17UthIbMRQ1KlYKJrcGj7J0Fui4r10ZRp4lF
+# d5ZRZ/mJ7g1QsV/PmwGEd+lb9fFbFWvx6UhhwXCGdTtObE9MfwOpLzIot3aPbqKl
+# ZyeKOD1MBJiVSPJFyYGwsDRf8qb64iU9P5eDBYWaPIGl+IwFh3RiBq8XeQbGureo
+# iT/qMqK5CFybNge9+hnQwVnG4xlx2rI04bQ56Jw=
 # SIG # End signature block
