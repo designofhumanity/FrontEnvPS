@@ -26,7 +26,6 @@ $Body = @{
   description =$Description;
 }|ConvertTo-Json;
 $result =Invoke-RestMethod -Headers $Headers -Uri https://api.github.com/user/repos -Body $Body -Method post | Format-Wide -Property clone_url -Column 1 | out-string
-#| Select-String -Pattern "https://github.com/*"
 $result = $result.trim()
 If (-Not (Test-Path .\$ProjectName))
 {
