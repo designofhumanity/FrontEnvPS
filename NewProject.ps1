@@ -1,3 +1,4 @@
+#Comment
 #1) Итак сначала читаем с клавиатуры название проекта
 $ProjectName=Read-Host -Prompt 'Input project name'
 #... описание проекта
