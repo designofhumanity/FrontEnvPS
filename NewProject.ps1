@@ -44,9 +44,12 @@ If (-Not (Test-Path .\node_modules\browser-sync))
 
 npm i browser-sync -save-dev -silent
 }
+If (-Not ( Test-Path ".\gulpfile.js" ))
+{
 New-Item .\gulpfile.js -ItemType "file" | out-null
 $receivedContent = Get-Content -Path "..\__template\gulpfile.js"
 Set-Content .\gulpfile.js -Value $receivedContent
+}
 If (-Not ( Test-Path ".\index.html" ))
 {
 New-Item .\index.html -ItemType "file" | out-null
@@ -91,8 +94,8 @@ gulp watch
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUTbuC9EiWqBomhNPYFJ8y7H9U
-# fAygggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUQkLOiLuOH3s5AdldLpnW63Uk
+# oCCgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -113,11 +116,11 @@ gulp watch
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFAilzZfOyRjb+oT7MMSrIWHZGKn5MA0GCSqG
-# SIb3DQEBAQUABIIBAIKQ01Llw/NLm9jsz0+mQGhg5/iY0QJ1EJHgnbIszPN95LXM
-# uJPKE/KDfZJ9AFrX0+M2tJEjjPNlsncoFpVFZO2vxPQUcjOsu2A+Hdmp+m/pnJAC
-# m9sS9+DiQY7a5+sNd6yed21FQdMv17UthIbMRQ1KlYKJrcGj7J0Fui4r10ZRp4lF
-# d5ZRZ/mJ7g1QsV/PmwGEd+lb9fFbFWvx6UhhwXCGdTtObE9MfwOpLzIot3aPbqKl
-# ZyeKOD1MBJiVSPJFyYGwsDRf8qb64iU9P5eDBYWaPIGl+IwFh3RiBq8XeQbGureo
-# iT/qMqK5CFybNge9+hnQwVnG4xlx2rI04bQ56Jw=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFNqfBcVL/PRoCxUDU51oTYHHOy92MA0GCSqG
+# SIb3DQEBAQUABIIBAKxfzJYXmKW0Gr0xlUDqEPlIAsaLDzdkXMlhai4jVVMl1a4f
+# bDNzccgHAeR4Ly+ZCHKzG+Wmhw88OqW9wDaZBXouhYxfUrXlUUiYRYbZWcnDUvWG
+# O0o9B2E3u+fkSKphARLpxy7PwmkvQvdS8yQ5FcZRkho8HLqlth/DuAdLkgnFDYaP
+# 9IbsggoZi+EgVpjZ+ltG+QylJWQJKi7TfZ8GwTMMQS9aKbcOe78dtpg0DCXJ/aE3
+# Km684wi845lYr1yfzIaOMZgTsJPnfdJ4gqeCgErGaUqeuVWA/SFl/b8otylcjaDn
+# DcinQikbjb3oOssiu5AK0Ch8Tser1LmCaiQ2zWs=
 # SIG # End signature block
