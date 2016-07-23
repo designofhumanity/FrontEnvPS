@@ -47,14 +47,14 @@ npm i browser-sync -save-dev -silent
 If (-Not ( Test-Path ".\gulpfile.js" ))
 {
 New-Item .\gulpfile.js -ItemType "file" | out-null
-$receivedContent = Get-Content -Path "..\__template\gulpfile.js"
+$receivedContent = Get-Content -Path "..\__template\_gulpfile.js"
 Set-Content .\gulpfile.js -Value $receivedContent
 }
 If (-Not ( Test-Path ".\index.html" ))
 {
 New-Item .\index.html -ItemType "file" | out-null
 #work/_template/index.html
-$receivedContent = Get-Content -Path "..\__template\index.html"
+$receivedContent = Get-Content -Path "..\__template\_index.html"
 Set-Content .\index.html -Value $receivedContent
 }
 #npm init
@@ -82,7 +82,7 @@ If (-Not (Test-Path .\$ProjectName))
 }
 New-Item .\.gitignore -ItemType "file" | out-null
 #Get-Content from template
-$receivedContent = Get-Content -Path "..\__template\.gitignore"
+$receivedContent = Get-Content -Path "..\__template\_.gitignore"
 Set-Content .\.gitignore -Value $receivedContent
 git init
 git add .
