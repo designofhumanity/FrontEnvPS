@@ -36,35 +36,85 @@ $projects_dir = $configurationContent -replace "projects_dir=",""
 Set-Location -Path $projects_dir
 If (-Not (Test-Path .\$ProjectName))
 {
-
   New-Item .\$ProjectName -type directory | out-null
+}
+#basic direcotry structure
+If (-Not (Test-Path .\$ProjectName\css))
+{
+  New-Item .\$ProjectName\css -type directory | out-null
+}
+If (-Not (Test-Path .\$ProjectName\js))
+{
+  New-Item .\$ProjectName\js -type directory | out-null
 }
 Set-Location -Path .\$ProjectName
 If (-Not (Test-Path .\node_modules))
 {
-
+$AnswerGulp =Read-Host -Prompt "Install gulp? 1 - yes, 2 - no"
+if ($AnswerGulp -eq "1") {
 npm i gulp -save-dev -silent
+}
 }
 If (-Not (Test-Path .\node_modules\browser-sync))
 {
-
+if ($AnswerGulp -eq "1") {
 npm i browser-sync -save-dev -silent
+}
 }
 If (-Not ( Test-Path ".\gulpfile.js" ))
 {
+  if ($AnswerGulp -eq "1") {
 New-Item .\gulpfile.js -ItemType "file" | out-null
 $receivedContent = Get-Content -Path $PSScriptRoot\__template\_gulpfile.js
 Set-Content .\gulpfile.js -Value $receivedContent
+}
 }
 If (-Not ( Test-Path ".\index.html" ))
 {
 New-Item .\index.html -ItemType "file" | out-null
 #work/_template/index.html
 $receivedContent = Get-Content -Path $PSScriptRoot\__template\_index.html
+if ($AnswerRepo -eq "1") {
+$i = 0
+$newArray = New-Object System.Collections.ArrayList
+foreach ($line in $receivedContent) {
+$i++
+if ($line -match "\<body\>") {
+$newArray.Add($line) > $null
+$newArray.Add("<p>On github createdRepository <a href=" + $result + ">репозиторий</a>.</p>") > $null
+} else {
+$newArray.Add($line) > $null
+}
+}
+$receivedContent = $newArray
+}
+$AnswerBootstrapGridSystem =Read-Host -Prompt "Add bootstrapGridSystem.css? 1 - yes, 2 - no"
+if ($AnswerBootstrapGridSystem -eq "1") {
+  $once = $TRUE
+  $i = 0
+  $newArray = New-Object System.Collections.ArrayList
+  foreach ($line in $receivedContent) {
+  $i++
+  #находим тег линк
+  if ($line -match "\<link.*\>" -And $once) {
+    #вставляем его и после него
+  $newArray.Add($line) > $null
+  #вставляем внешние стили
+  $newArray.Add('<link rel="stylesheet" href="css/bootstrapGridSystem.css">') > $null
+  #but we need to copy this file from template dir to project directory
+  Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+  #break from cycle e.g. first link
+  $once = $FALSE
+  } else {
+  $newArray.Add($line) > $null
+  }
+  }
+  $receivedContent = $newArray
+}
 Set-Content .\index.html -Value $receivedContent
 }
 #npm init
-If (-Not (Test-Path .\$ProjectName))
+If (-Not (Test-Path "$projects_dir\$ProjectName\package.json"))
 {
   New-Item .\package.json -ItemType "file" | out-null
   Set-Content .\package.json -Value @"
@@ -85,7 +135,7 @@ If (-Not (Test-Path .\$ProjectName))
     "license": "ISC"
   }
 "@
-}
+} #else npm init
 If ($AnswerRepo -eq "1") {
 New-Item .\.gitignore -ItemType "file" | out-null
 #Get-Content from template
@@ -97,13 +147,17 @@ git commit -m "First project commit"
 git remote add currentRepo $result
 git push currentRepo master
 }
-gulp watch
+#open favorite text editor (I am using ATOM)
+atom .
+If ($AnswerGulp -eq "1") {
+start-process powershell.exe -argument '-nologo -noprofile -executionpolicy bypass -command gulp watch'
+}
 Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUD1HZd/f+w8gVomkV2UEIfPh5
-# H3ygggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUEhg9b3ncLCUPp58rMDhNsK0w
+# LtSgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -124,11 +178,11 @@ Set-Location $projects_dir
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFEzrY/OLzUVPPKlrvQ2Vvh5XomB0MA0GCSqG
-# SIb3DQEBAQUABIIBAJpfyu0FXxSfxxYiNnE3Gg0/XtpdcL2VIliTmQfR4c/rWlBs
-# 8h5i5iwgB+WypWUXvJQCwcgIgO+Or424nfAkSwGl4TzIJLuOFUU0rramOAOQDDzp
-# 83O/wFkFbZtoF625Mg9tVE4Gu9IR1Q6u1j9By19QNS9A5qQ4YxQvJZx9LhbhPkD+
-# 3xfUtN+14ozl4BbhF0Jg26XOe1MznlC1UE+vMCWCCKUzn5XLGIQgwZ3GPMhXASCC
-# lWa182fEcHzqWFjJYiTrLyVTmq5FDUb7/EnL0hptWbbp/f8kbxZV6wx5ZSGbi1r2
-# 6BDH4Ptj9yNxJXbGPJK4HSIs3HKFoaQVsE1bTQA=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFMVNw1zzDDNPlaeoFMOAie3m+T8tMA0GCSqG
+# SIb3DQEBAQUABIIBAHjrG3yGCDrqZynLTqoOyvV7lARZBscNNJJuP72AyDHUYxrM
+# sNik+bEhoPBAPUNwvrTvYzL63XVQRAne28vTiBj+3bCb+ENrELTZvHFwoghzSGDb
+# Nhczw1UAgLdqdDnEwIhNMg38SC1FNV4wO7Wa83iuLq/hv4GDJhcEloPE/LQXOWMo
+# daZIoHWKOSilrA7TFLfHJDtOzAYy9ozCoA8Ql4S/IYS5oCujXCd+fnTcUF4HTGNi
+# QDmT0Z6rvyctj4bEx2j0KkErmEYeRa6/7dSU91CpyXPlIuSDbfDI8yBRK/jlKCJi
+# yt34T0E4RcA/+LtV0KdSGLLi+pzT+By5ppwP/RM=
 # SIG # End signature block
