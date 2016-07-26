@@ -24,10 +24,16 @@ $Body = @{
   name = $ProjectName;
   description =$Description;
 }|ConvertTo-Json;
+$AnswerRepo =Read-Host -Prompt "Create repository on github? 1 - yes, 2 - no"
+If ($AnswerRepo -eq "1") {
 $result =Invoke-RestMethod -Headers $Headers -Uri https://api.github.com/user/repos -Body $Body -Method post | Format-Wide -Property clone_url -Column 1 | out-string
 #| Select-String -Pattern "https://github.com/*"
 $result = $result.trim()
-
+#Read path to your folder with your projects
+}
+$configurationContent =Get-Content $PSScriptRoot\configuration.conf
+$projects_dir = $configurationContent -replace "projects_dir=",""
+Set-Location -Path $projects_dir
 If (-Not (Test-Path .\$ProjectName))
 {
 
@@ -47,14 +53,14 @@ npm i browser-sync -save-dev -silent
 If (-Not ( Test-Path ".\gulpfile.js" ))
 {
 New-Item .\gulpfile.js -ItemType "file" | out-null
-$receivedContent = Get-Content -Path "..\__template\_gulpfile.js"
+$receivedContent = Get-Content -Path $PSScriptRoot\__template\_gulpfile.js
 Set-Content .\gulpfile.js -Value $receivedContent
 }
 If (-Not ( Test-Path ".\index.html" ))
 {
 New-Item .\index.html -ItemType "file" | out-null
 #work/_template/index.html
-$receivedContent = Get-Content -Path "..\__template\_index.html"
+$receivedContent = Get-Content -Path $PSScriptRoot\__template\_index.html
 Set-Content .\index.html -Value $receivedContent
 }
 #npm init
@@ -80,22 +86,24 @@ If (-Not (Test-Path .\$ProjectName))
   }
 "@
 }
+If ($AnswerRepo -eq "1") {
 New-Item .\.gitignore -ItemType "file" | out-null
 #Get-Content from template
-$receivedContent = Get-Content -Path "..\__template\_.gitignore"
+$receivedContent = Get-Content -Path $PSScriptRoot\__template\_.gitignore
 Set-Content .\.gitignore -Value $receivedContent
 git init
 git add .
 git commit -m "First project commit"
 git remote add currentRepo $result
 git push currentRepo master
+}
 gulp watch
-
+Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUQkLOiLuOH3s5AdldLpnW63Uk
-# oCCgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUD1HZd/f+w8gVomkV2UEIfPh5
+# H3ygggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -116,11 +124,11 @@ gulp watch
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFNqfBcVL/PRoCxUDU51oTYHHOy92MA0GCSqG
-# SIb3DQEBAQUABIIBAKxfzJYXmKW0Gr0xlUDqEPlIAsaLDzdkXMlhai4jVVMl1a4f
-# bDNzccgHAeR4Ly+ZCHKzG+Wmhw88OqW9wDaZBXouhYxfUrXlUUiYRYbZWcnDUvWG
-# O0o9B2E3u+fkSKphARLpxy7PwmkvQvdS8yQ5FcZRkho8HLqlth/DuAdLkgnFDYaP
-# 9IbsggoZi+EgVpjZ+ltG+QylJWQJKi7TfZ8GwTMMQS9aKbcOe78dtpg0DCXJ/aE3
-# Km684wi845lYr1yfzIaOMZgTsJPnfdJ4gqeCgErGaUqeuVWA/SFl/b8otylcjaDn
-# DcinQikbjb3oOssiu5AK0Ch8Tser1LmCaiQ2zWs=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFEzrY/OLzUVPPKlrvQ2Vvh5XomB0MA0GCSqG
+# SIb3DQEBAQUABIIBAJpfyu0FXxSfxxYiNnE3Gg0/XtpdcL2VIliTmQfR4c/rWlBs
+# 8h5i5iwgB+WypWUXvJQCwcgIgO+Or424nfAkSwGl4TzIJLuOFUU0rramOAOQDDzp
+# 83O/wFkFbZtoF625Mg9tVE4Gu9IR1Q6u1j9By19QNS9A5qQ4YxQvJZx9LhbhPkD+
+# 3xfUtN+14ozl4BbhF0Jg26XOe1MznlC1UE+vMCWCCKUzn5XLGIQgwZ3GPMhXASCC
+# lWa182fEcHzqWFjJYiTrLyVTmq5FDUb7/EnL0hptWbbp/f8kbxZV6wx5ZSGbi1r2
+# 6BDH4Ptj9yNxJXbGPJK4HSIs3HKFoaQVsE1bTQA=
 # SIG # End signature block
