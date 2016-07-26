@@ -73,20 +73,17 @@ If (-Not ( Test-Path ".\index.html" ))
 {
 New-Item .\index.html -ItemType "file" | out-null
 #work/_template/index.html
-$receivedContent = Get-Content -Path $PSScriptRoot\__template\_index.html
+#$receivedContent = Get-Content -Path $PSScriptRoot\__template\_index.html
+$receivedContent =iwr -uri https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/index.html
+$HTML =$receivedContent.ParsedHtml
 if ($AnswerRepo -eq "1") {
-$i = 0
-$newArray = New-Object System.Collections.ArrayList
-foreach ($line in $receivedContent) {
-$i++
-if ($line -match "\<body\>") {
-$newArray.Add($line) > $null
-$newArray.Add("<p>On github createdRepository <a href=" + $result + ">репозиторий</a>.</p>") > $null
-} else {
-$newArray.Add($line) > $null
-}
-}
-$receivedContent = $newArray
+$pTag=$HTML.createElement("p")
+$pTag.innerHTML = "On github createdRepository"
+$aTag =$HTML.createElement("a")
+$aTag.href=$result
+$aTag.innerHTML = "repository"
+$HTML.body.appendChild($pTag)
+$pTag.appendChild($aTag)
 }
 $AnswerBootstrapGridSystem =Read-Host -Prompt "Add bootstrapGridSystem.css? 1 - yes, 2 - no"
 if ($AnswerBootstrapGridSystem -eq "1") {
@@ -96,7 +93,7 @@ if ($AnswerBootstrapGridSystem -eq "1") {
   foreach ($line in $receivedContent) {
   $i++
   #находим тег линк
-  if ($line -match "\<link.*\>" -And $once) {
+  if ($line -match "<link.*" -And $once) {
     #вставляем его и после него
   $newArray.Add($line) > $null
   #вставляем внешние стили
@@ -111,7 +108,7 @@ if ($AnswerBootstrapGridSystem -eq "1") {
   }
   $receivedContent = $newArray
 }
-Set-Content .\index.html -Value $receivedContent
+Set-Content .\index.html -Value $receivedContent.content
 }
 #npm init
 If (-Not (Test-Path "$projects_dir\$ProjectName\package.json"))
@@ -156,8 +153,8 @@ Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUEhg9b3ncLCUPp58rMDhNsK0w
-# LtSgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUi0cJmD7jfZsFO2/B+/5TUvrU
+# 6FKgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -178,11 +175,11 @@ Set-Location $projects_dir
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFMVNw1zzDDNPlaeoFMOAie3m+T8tMA0GCSqG
-# SIb3DQEBAQUABIIBAHjrG3yGCDrqZynLTqoOyvV7lARZBscNNJJuP72AyDHUYxrM
-# sNik+bEhoPBAPUNwvrTvYzL63XVQRAne28vTiBj+3bCb+ENrELTZvHFwoghzSGDb
-# Nhczw1UAgLdqdDnEwIhNMg38SC1FNV4wO7Wa83iuLq/hv4GDJhcEloPE/LQXOWMo
-# daZIoHWKOSilrA7TFLfHJDtOzAYy9ozCoA8Ql4S/IYS5oCujXCd+fnTcUF4HTGNi
-# QDmT0Z6rvyctj4bEx2j0KkErmEYeRa6/7dSU91CpyXPlIuSDbfDI8yBRK/jlKCJi
-# yt34T0E4RcA/+LtV0KdSGLLi+pzT+By5ppwP/RM=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFODyVla50nNzGp4nx9dFGzala4SWMA0GCSqG
+# SIb3DQEBAQUABIIBAH5qzMv6bW1kr9qSi1BYDDdrJcXf9dgH0g99C7yu/hoiD0va
+# 1k6kinpzRY6tQUwd7mNq1JvJrio9XfTA0GPgoMKklq850yF+c+I9e42P/ors6A+G
+# mcz3pxBhrcdSd0lOwZ+UaLoZ1TaM2naG+bIMCwnVVAFRc/DoSlZQ5Shm47JpKFQR
+# IrCVL1M79o7WUhwqCm/BE4h537WnVWZiu2ndCGo9Yu8M5Xne1H0Bn23MAariNoYp
+# caewLGYPuDJNvHw1us6dCkujnNtOo0BbpD91VwsHBHgVMtpzf5f8lk0wmIfNdGZW
+# 1JtyLj5DxCCJg9+5sTGObmiDDKUmVV0T4r95dWs=
 # SIG # End signature block
