@@ -8,3 +8,5 @@
 #Key words for search: lazy frontender, one script and done, one click everything is ready.
 #In the future basic template like grid systems, frame works, sass,less compilers and so on
 #For index.html using HTML5 Boilerplate
+#Update HTML5 Boilerplate once a week
+#
