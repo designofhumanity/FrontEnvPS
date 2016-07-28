@@ -1,4 +1,4 @@
-$endData = (get-item .\NewProjectPs\__template\_index.html).LastWriteTime
+$endData = (get-item $PSScriptRoot\__template\_index.html).LastWriteTime
 $dateDiff = (new-timespan -start (get-date) -end $endData)
 If ($dateDiff.days -gt 7) {
 Write-Host "HTML5 boilerplate index.html outdated file to $dateDiff.days days"
@@ -112,6 +112,33 @@ if ($AnswerRepo -eq "1") {
   }
   $receivedContent = $newArray
 }
+$AnswerScript =Read-Host -Prompt "Add empty script.js? 1 - yes, 2 - no";
+If ($AnswerScript -eq "1")
+{
+  If (-Not ( Test-Path "$projects_dir\$ProjectName\js\script.js" ))
+  {
+    New-Item .\js\script.js -ItemType "file" | out-null;
+  }
+  $once = $TRUE
+  $i = 0
+  $newArray = New-Object System.Collections.ArrayList
+  foreach ($line in $receivedContent) {
+  $i++
+  #находим тег линк
+  if ($line -match "</body>" -And $once) {
+  $newArray.Add("`t`t`t`t<script src=""js/script.js""></script>") > $null
+  $newArray.Add($line) > $null
+  #вставляем внешние стили
+  #but we need to copy this file from template dir to project directory
+  #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+  #break from cycle e.g. first link
+  $once = $FALSE
+  } else {
+  $newArray.Add($line) > $null
+  }
+  }
+  $receivedContent = $newArray
+}
 $AnswerJquery =Read-Host -Prompt "Add jQuery.js? 1 - yes, 2 - no"
 if ($AnswerJquery -eq "1") {
   $once = $TRUE
@@ -125,7 +152,7 @@ if ($AnswerJquery -eq "1") {
   $newArray.Add($line) > $null
   #вставляем внешние стили
   #but we need to copy this file from template dir to project directory
-  Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+  #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
   #break from cycle e.g. first link
   $once = $FALSE
   } else {
@@ -146,7 +173,7 @@ if ($AnswerBootstrapGridSystem -eq "1") {
     #вставляем его и после него
   $newArray.Add($line) > $null
   #вставляем внешние стили
-  $newArray.Add("<link rel=""stylesheet"" href=""css/bootstrapGridSystem.css"">") > $null
+  $newArray.Add("`t`t`t`t<link rel=""stylesheet"" href=""css/bootstrapGridSystem.css"">") > $null
   #but we need to copy this file from template dir to project directory
   Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
   #break from cycle e.g. first link
@@ -160,9 +187,16 @@ if ($AnswerBootstrapGridSystem -eq "1") {
 Set-Content .\index.html -Value $receivedContent
 }
 #npm init
+#HOW GET GULP VERSION?
+#HOW GET Browser-sync version?
+#LIcense
 If (-Not (Test-Path "$projects_dir\$ProjectName\package.json"))
 {
   New-Item .\package.json -ItemType "file" | out-null
+  $gulpVersionStr = gulp -version;
+  $arr = $gulpVersionStr -split(" ", "")
+  $arr.GetType()
+$gulpVersion =$arr[3]
   Set-Content .\package.json -Value @"
   {
     "name": "$ProjectName",
@@ -171,7 +205,7 @@ If (-Not (Test-Path "$projects_dir\$ProjectName\package.json"))
     "main": "gulpfile.js",
     "dependencies": {
       "browser-sync": "^2.12.8",
-      "gulp": "^3.9.1"
+      "gulp": "^$gulpVersion"
     },
     "devDependencies": {},
     "scripts": {
@@ -195,6 +229,7 @@ git push currentRepo master
 }
 #open favorite text editor (I am using ATOM)
 atom .
+ii .
 If ($AnswerGulp -eq "1" -OR (Test-Path "$projects_dir\$ProjectName\gulpfile.js") ) {
 start-process powershell.exe -argument '-nologo -noprofile -executionpolicy bypass -command gulp watch'
 }
@@ -202,8 +237,8 @@ Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUkWTx26Qpn+ub8Ano565fN3tp
-# gXKgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUwGXZtxFVgazqlTT7UEYlESri
+# ZkegggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -224,11 +259,11 @@ Set-Location $projects_dir
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFHKK+bz6RY/BXJDm7ujpdtUwQW/8MA0GCSqG
-# SIb3DQEBAQUABIIBAD9iXaqz1QBIwaOpz5xt8BoFchwb7N8qTlV1LX3cidPDPYC7
-# JgDnn2RK96mq/Gyg30uE+B+sw+ehr1pw5s16UN8iSHnJWKO/mvmf3uIDs3cggKRs
-# inSsGgTLVGFnijaGRR+cGE/OAZjuxcBokAhn/0TrN8qwbUUOsz/FkfEF70cLIZ4r
-# iuRcYWhWrVGhYb//zIf1hX1XcDh/M823d4fzdpa9fl8lEYGb9rNB0LlfwyA5qwed
-# PEAKiFOy1cz5ZwIlpUPI5/mmbVInHC0brFq78HOes6teu/m9+CCxn4fjIA5CMtTe
-# bwA+Wmb/+IKjA1JVNgpfWnL31quCWHNcClMgf/0=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFNUvLY02m8+jO7wW7jxasOk5LAdxMA0GCSqG
+# SIb3DQEBAQUABIIBABKyKP+1tiwZEiwrfeD8mnsjCb9q+TjNmzKqylbKRntLjv4B
+# lVqLzR05xc9DR1NFf+JjdD0u/oBjIh0I/hKL8fyP45SlPVAl3Hk/lvEEKjYPivOR
+# uQ+rnMT+UFFCylUen6n1iHAvKlTzS6Ov5Xi9dXlSwwSgIFea35X/TVtE/uepLwYv
+# +6Fb4GXRbsClqkMERUsmUSrKMw7bgcxKkBcsoPIlWmuo84MMrs+K4NFpm2V4Drtt
+# ASKoVLFrdeHogfM9u1bfDLNkr3eSiRG/5oUm/phRsfQZb3mSzll7RNX7E7iQUM7x
+# MjxwNfIApKYw2ak7crGNiStiF2+nQ6CrAt1yvzE=
 # SIG # End signature block
