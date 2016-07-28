@@ -1,3 +1,18 @@
+$endData = (get-item .\NewProjectPs\__template\_index.html).LastWriteTime
+$dateDiff = (new-timespan -start (get-date) -end $endData)
+If ($dateDiff.days -gt 7) {
+Write-Host "HTML5 boilerplate index.html outdated file to $dateDiff.days days"
+$AnswerUpdate =Read-Host -Prompt 'Update HTML5 boilerplate templates from github? 1 - Yes, else - no'
+#$PSScriptRoot\__template\css\bootstrapGridSystem.css
+#$PSScriptRoot\__template\_gulpfile.js
+if ($AnswerUpdate -eq "1") {
+#If ($dateDiff.days -gt 7) {.... update html5-bolerplate
+  Invoke-WebRequest "https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/index.html" -outfile $PSScriptRoot\__template\_index.html
+  $endData = (get-item .\NewProjectPs\__template\_index.html).LastWriteTime
+  $dateDiff = (new-timespan -start (get-date) -end $endData).days
+  Write-Host "HTML5 boilerplate index.html days beetween", $dateDiff
+}
+}
 #1) Итак сначала читаем с клавиатуры название проекта
 $ProjectName=Read-Host -Prompt 'Input project name'
 #... описание проекта
@@ -74,16 +89,50 @@ If (-Not ( Test-Path ".\index.html" ))
 New-Item .\index.html -ItemType "file" | out-null
 #work/_template/index.html
 #$receivedContent = Get-Content -Path $PSScriptRoot\__template\_index.html
-$receivedContent =iwr -uri https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/index.html
-$HTML =$receivedContent.ParsedHtml
+#$receivedContent =iwr -uri https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/index.html
+$receivedContent =Get-Content -Path $PSScriptRoot\__template\_index.html
 if ($AnswerRepo -eq "1") {
-$pTag=$HTML.createElement("p")
-$pTag.innerHTML = "On github createdRepository"
-$aTag =$HTML.createElement("a")
-$aTag.href=$result
-$aTag.innerHTML = "repository"
-$HTML.body.appendChild($pTag)
-$pTag.appendChild($aTag)
+  $once = $TRUE
+  $i = 0
+  $newArray = New-Object System.Collections.ArrayList
+  foreach ($line in $receivedContent) {
+  $i++
+  #находим тег линк
+  if ($line -match "<body>" -And $once) {
+      $newArray.Add($line) > $null
+    $newArray.Add("`t`t`t`t<p>Created repo on<a href=""$result""></a>github</p>") > $null
+  #вставляем внешние стили
+  #but we need to copy this file from template dir to project directory
+  Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+  #break from cycle e.g. first link
+  $once = $FALSE
+  } else {
+  $newArray.Add($line) > $null
+  }
+  }
+  $receivedContent = $newArray
+}
+$AnswerJquery =Read-Host -Prompt "Add jQuery.js? 1 - yes, 2 - no"
+if ($AnswerJquery -eq "1") {
+  $once = $TRUE
+  $i = 0
+  $newArray = New-Object System.Collections.ArrayList
+  foreach ($line in $receivedContent) {
+  $i++
+  #находим тег линк
+  if ($line -match "</body>" -And $once) {
+    $newArray.Add("`t`t`t`t<script src=""js/jQuery.js""></script>") > $null
+  $newArray.Add($line) > $null
+  #вставляем внешние стили
+  #but we need to copy this file from template dir to project directory
+  Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+  #break from cycle e.g. first link
+  $once = $FALSE
+  } else {
+  $newArray.Add($line) > $null
+  }
+  }
+  $receivedContent = $newArray
 }
 $AnswerBootstrapGridSystem =Read-Host -Prompt "Add bootstrapGridSystem.css? 1 - yes, 2 - no"
 if ($AnswerBootstrapGridSystem -eq "1") {
@@ -97,7 +146,7 @@ if ($AnswerBootstrapGridSystem -eq "1") {
     #вставляем его и после него
   $newArray.Add($line) > $null
   #вставляем внешние стили
-  $newArray.Add('<link rel="stylesheet" href="css/bootstrapGridSystem.css">') > $null
+  $newArray.Add("<link rel=""stylesheet"" href=""css/bootstrapGridSystem.css"">") > $null
   #but we need to copy this file from template dir to project directory
   Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
   #break from cycle e.g. first link
@@ -108,7 +157,7 @@ if ($AnswerBootstrapGridSystem -eq "1") {
   }
   $receivedContent = $newArray
 }
-Set-Content .\index.html -Value $receivedContent.content
+Set-Content .\index.html -Value $receivedContent
 }
 #npm init
 If (-Not (Test-Path "$projects_dir\$ProjectName\package.json"))
@@ -146,15 +195,15 @@ git push currentRepo master
 }
 #open favorite text editor (I am using ATOM)
 atom .
-If ($AnswerGulp -eq "1") {
+If ($AnswerGulp -eq "1" -OR (Test-Path "$projects_dir\$ProjectName\gulpfile.js") ) {
 start-process powershell.exe -argument '-nologo -noprofile -executionpolicy bypass -command gulp watch'
 }
 Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUi0cJmD7jfZsFO2/B+/5TUvrU
-# 6FKgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUkWTx26Qpn+ub8Ano565fN3tp
+# gXKgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -175,11 +224,11 @@ Set-Location $projects_dir
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFODyVla50nNzGp4nx9dFGzala4SWMA0GCSqG
-# SIb3DQEBAQUABIIBAH5qzMv6bW1kr9qSi1BYDDdrJcXf9dgH0g99C7yu/hoiD0va
-# 1k6kinpzRY6tQUwd7mNq1JvJrio9XfTA0GPgoMKklq850yF+c+I9e42P/ors6A+G
-# mcz3pxBhrcdSd0lOwZ+UaLoZ1TaM2naG+bIMCwnVVAFRc/DoSlZQ5Shm47JpKFQR
-# IrCVL1M79o7WUhwqCm/BE4h537WnVWZiu2ndCGo9Yu8M5Xne1H0Bn23MAariNoYp
-# caewLGYPuDJNvHw1us6dCkujnNtOo0BbpD91VwsHBHgVMtpzf5f8lk0wmIfNdGZW
-# 1JtyLj5DxCCJg9+5sTGObmiDDKUmVV0T4r95dWs=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFHKK+bz6RY/BXJDm7ujpdtUwQW/8MA0GCSqG
+# SIb3DQEBAQUABIIBAD9iXaqz1QBIwaOpz5xt8BoFchwb7N8qTlV1LX3cidPDPYC7
+# JgDnn2RK96mq/Gyg30uE+B+sw+ehr1pw5s16UN8iSHnJWKO/mvmf3uIDs3cggKRs
+# inSsGgTLVGFnijaGRR+cGE/OAZjuxcBokAhn/0TrN8qwbUUOsz/FkfEF70cLIZ4r
+# iuRcYWhWrVGhYb//zIf1hX1XcDh/M823d4fzdpa9fl8lEYGb9rNB0LlfwyA5qwed
+# PEAKiFOy1cz5ZwIlpUPI5/mmbVInHC0brFq78HOes6teu/m9+CCxn4fjIA5CMtTe
+# bwA+Wmb/+IKjA1JVNgpfWnL31quCWHNcClMgf/0=
 # SIG # End signature block

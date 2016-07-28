@@ -1,10 +1,47 @@
-Invoke-WebRequest "https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/index.html" -outfile ".\_index.html"
+$files = @{"_index.html" = "https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/index.html";
+"_404.html" = "https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/404.html";
+"_bootstrap.css" = "https://raw.githubusercontent.com/twbs/bootstrap/master/dist/css/bootstrap.css";
+"_bootstrap.js" = "https://raw.githubusercontent.com/twbs/bootstrap/master/dist/js/bootstrap.js";}
+
+$rootFolder = ""
+Foreach ($key in $files.keys)
+{
+  #cases for exmaple "jquery.1.3.3.comment.buil.js"
+  if ($key.split(".")[-1] -eq "css") {
+    $rootFolder = "$PSScriptRoot\css"
+    If (-not (Test-Path $rootFolder)) {
+      New-Item $rootFolder -type directory | out-null
+    }
+  }
+  if ($key.split(".")[-1] -eq "js") {
+    $rootFolder = "$PSScriptRoot\js"
+  }
+  if ($key.split(".")[-1] -eq "html" -OR ($key.split(".")[-1] -eq "htm")) {
+      $rootFolder = $PSScriptRoot
+  }
+  If (-not (Test-Path $rootFolder\$key))
+  {
+    New-Item $rootFolder\$key -itemType "file" | out-null
+  }
+  If (-not (Test-Path $rootFolder)) {
+    New-Item $rootFolder -type directory | out-null
+  }
+  echo $rootFolder\$key
+  $endData = (get-item $rootFolder\$key).LastWriteTime
+  $dateDiff = (new-timespan -start (get-date) -end $endData)
+  #If ($dateDiff.days -gt 7) {
+  $url = $files.item($key);
+  Invoke-WebRequest -uri $files.item($key) -outfile $rootFolder\$key
+  (get-item $rootFolder\$key).LastWriteTime
+#}
+}
+
 
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUTbQgM400rqH37mPJ14rK1XWL
-# scqgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUW95+5JK91QHzyWk4AFuHXqSn
+# F42gggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -25,11 +62,11 @@ Invoke-WebRequest "https://raw.githubusercontent.com/h5bp/html5-boilerplate/mast
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFAFrUwIAALMR2tAGO4aItZTkBcKwMA0GCSqG
-# SIb3DQEBAQUABIIBAMo8hth8YdBX9hsnl+VQUvk9c9FtffQg4Z34Cvb4fOifsRco
-# I8vGW+LnmEvCdwm/52st5miFP5iC3wXluA2Lpo/pFkOT9/Ui7uYHl5wLNDp/vGoe
-# DkSF6Zq981ma6CWY1eOeRBvnV8Aro4DMz+22hw4eTyA/OJNOf6K3cI6Rkkh3sx/i
-# ggwrPmjKySvEGwjBSbmVWA+hA/83LWHYOk1Alykvx0npdPB9D85FWyxfTUpmi000
-# YGhZPkfVC4US/9d+nFNlGHB2qHq1Ov4i/umy4O2Y1FU+b5jPl9MKfrsGK9yNlRky
-# hukxO3lCxAVmlnQr7CKJXI3mXfpHGNqdlXDrit0=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFC3Nb4pk3Qlm5IccJGFLqoUoxI6DMA0GCSqG
+# SIb3DQEBAQUABIIBAB0ZPR3QWRJpUM1x1Z26rMVz9y7q6tC0eLYmzmt8ImhX5O72
+# AS+htGTWJQ9OvWIaHI8iBISNCCYSJA4u3Pxa+wfZVi0m3usZpD2ZTX4U3odB7LTF
+# APdrb0H77mVUu0mZesb6KUgniCk4eJkgB9bSYl7QT1WoVnkUz8CzW8IqlZgkE83J
+# PEkezqZ1QOtOoC7sS4LK8YWYuY5/Qdgd/EK/M51aXGCF2sK/HCYHbsCakb410fmO
+# +g1IXGX471DITVk1YYQPg3IbbTl6c9BOMEkHVyMipBgTcKkfMXItkurBQORXoQS/
+# zCl6EZ/zZ4VsWmWUzkh9wmVlQ26urBfCTY1fFZw=
 # SIG # End signature block
