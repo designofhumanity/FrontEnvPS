@@ -1,0 +1,5 @@
+{
+    "commands": [
+        "*.ps1 : "D:\Work\ps-signature\Add-Signature.ps1 D:\Work\NewProjectPs\NewProject.ps1"
+    ]
+}

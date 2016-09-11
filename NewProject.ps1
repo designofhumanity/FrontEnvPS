@@ -100,7 +100,7 @@ if ($AnswerRepo -eq "1") {
   #находим тег линк
   if ($line -match "<body>" -And $once) {
       $newArray.Add($line) > $null
-    $newArray.Add("`t`t`t`t<p>Created repo on<a href=""$result""></a>github</p>") > $null
+    $newArray.Add("`t`t`t`t<p>Created repo on <a href='$result'></a>github</p>") > $null
   #вставляем внешние стили
   #but we need to copy this file from template dir to project directory
   Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
@@ -187,7 +187,6 @@ if ($AnswerBootstrapGridSystem -eq "1") {
 Set-Content .\index.html -Value $receivedContent
 }
 #npm init
-#HOW GET GULP VERSION?
 #HOW GET Browser-sync version?
 #LIcense
 If (-Not (Test-Path "$projects_dir\$ProjectName\package.json"))
@@ -237,8 +236,8 @@ Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUwGXZtxFVgazqlTT7UEYlESri
-# ZkegggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUuAjE4Vya2ZxfB099HZZyTL+H
+# NsGgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -259,11 +258,11 @@ Set-Location $projects_dir
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFNUvLY02m8+jO7wW7jxasOk5LAdxMA0GCSqG
-# SIb3DQEBAQUABIIBABKyKP+1tiwZEiwrfeD8mnsjCb9q+TjNmzKqylbKRntLjv4B
-# lVqLzR05xc9DR1NFf+JjdD0u/oBjIh0I/hKL8fyP45SlPVAl3Hk/lvEEKjYPivOR
-# uQ+rnMT+UFFCylUen6n1iHAvKlTzS6Ov5Xi9dXlSwwSgIFea35X/TVtE/uepLwYv
-# +6Fb4GXRbsClqkMERUsmUSrKMw7bgcxKkBcsoPIlWmuo84MMrs+K4NFpm2V4Drtt
-# ASKoVLFrdeHogfM9u1bfDLNkr3eSiRG/5oUm/phRsfQZb3mSzll7RNX7E7iQUM7x
-# MjxwNfIApKYw2ak7crGNiStiF2+nQ6CrAt1yvzE=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFLx3+4LZcOCoWxBAZz1Y8ZR8xNwjMA0GCSqG
+# SIb3DQEBAQUABIIBANLxZszyNtH42RlnvpRjVhvwVmuTad6lpkAurDnMSChz9/we
+# kuD9lLX/7hIDoN/6DElbvV6BVOrSrf9iipk5MTrt0Ipur73KipBokQTqmFJmtxJZ
+# OzlYkHv9SGlD9yCO16/0y8aDRF0t62Qu+I6IJzBYeheXyPkVvtow9W2YLyo0Tx6O
+# o4bEhE1AckE+ETiLIOaQgOrRlP9HezUcsk7FHiemYPbKnkaUs6ByBFCzI1DJsm4Q
+# iZE00IaT08lZ8IJ6Bn2NQRhfGJotQLuYE1V1/R1Rl5fXJ95yucUT4A8v2aenUvYG
+# j8CorUPFkv8EWo3Lx5FFtKuhtr4lKR/gpH5ng/Y=
 # SIG # End signature block
