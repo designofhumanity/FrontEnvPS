@@ -1,4 +1,4 @@
-# NewProjectPS
+# Windows frontend workflow
 #Requirements: Node Package Manager, windows powershell, Atom
 #Powershell script that set-up frontend development environment
 #1) Install gulp if not exist (node_modules folders)
