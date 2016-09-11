@@ -1,6 +1,6 @@
 $endData = (get-item $PSScriptRoot\__template\_index.html).LastWriteTime
 $dateDiff = (new-timespan -start (get-date) -end $endData)
-If ($dateDiff.days -gt 7) {
+If ($dateDiff.days -lt -7) {
 Write-Host "HTML5 boilerplate index.html outdated file to $dateDiff.days days"
 $AnswerUpdate =Read-Host -Prompt 'Update HTML5 boilerplate templates from github? 1 - Yes, else - no'
 #$PSScriptRoot\__template\css\bootstrapGridSystem.css
@@ -8,7 +8,7 @@ $AnswerUpdate =Read-Host -Prompt 'Update HTML5 boilerplate templates from github
 if ($AnswerUpdate -eq "1") {
 #If ($dateDiff.days -gt 7) {.... update html5-bolerplate
   Invoke-WebRequest "https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/index.html" -outfile $PSScriptRoot\__template\_index.html
-  $endData = (get-item .\NewProjectPs\__template\_index.html).LastWriteTime
+  $endData = (get-item .\__template\_index.html).LastWriteTime
   $dateDiff = (new-timespan -start (get-date) -end $endData).days
   Write-Host "HTML5 boilerplate index.html days beetween", $dateDiff
 }
@@ -236,8 +236,8 @@ Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUuAjE4Vya2ZxfB099HZZyTL+H
-# NsGgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU14Whwdji5aLMtI4YysD1J4OM
+# k2CgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -258,11 +258,11 @@ Set-Location $projects_dir
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFLx3+4LZcOCoWxBAZz1Y8ZR8xNwjMA0GCSqG
-# SIb3DQEBAQUABIIBANLxZszyNtH42RlnvpRjVhvwVmuTad6lpkAurDnMSChz9/we
-# kuD9lLX/7hIDoN/6DElbvV6BVOrSrf9iipk5MTrt0Ipur73KipBokQTqmFJmtxJZ
-# OzlYkHv9SGlD9yCO16/0y8aDRF0t62Qu+I6IJzBYeheXyPkVvtow9W2YLyo0Tx6O
-# o4bEhE1AckE+ETiLIOaQgOrRlP9HezUcsk7FHiemYPbKnkaUs6ByBFCzI1DJsm4Q
-# iZE00IaT08lZ8IJ6Bn2NQRhfGJotQLuYE1V1/R1Rl5fXJ95yucUT4A8v2aenUvYG
-# j8CorUPFkv8EWo3Lx5FFtKuhtr4lKR/gpH5ng/Y=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFJS7853ZWH1Ozjy4UU0K6J6ZybgfMA0GCSqG
+# SIb3DQEBAQUABIIBAEVK+awzOO1BUYHnsT529RxnCrJ13sqhBpcRpfUQcBvvJS0O
+# 3v4ByYwL+HuEXrKUhsbydoGry6Kv7fl5rIKx03a1CfR1ZgjdPuy7q6uwT6Nvq8xo
+# Yu1bTAPitWVNhL+WO2T8zN+JzT1A+Fbre2Lchisd8jrxk7i4kIe8xOnHhhJaZ96Z
+# 7uvMBDsUlTTyGN4S23gz+C0phl+GHPMXC2y8INq8O5K02exhmILuOtsGrUsybgrL
+# +K2IU6hl+LzTy7RuQH3VjFwMK0+hX3lnAp3ijzqDqn9sRiSc2htimYlxrH70gRyv
+# DGv7O+0HF5TROQFhCCeHuSLc6Vtjrc1bpQIJuek=
 # SIG # End signature block
