@@ -15,7 +15,7 @@ function addToHTML
       }
       #вставляем внешние стили
       #but we need to copy this file from template dir to project directory
-      #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+      #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $full_path\css\bootstrapGridSystem.css
       #break from cycle e.g. first link
       $once = $FALSE
     } else {
@@ -65,69 +65,74 @@ $Body = @{
   name = $ProjectName;
   description =$Description;
 }|ConvertTo-Json;
-$AnswerRepo =Read-Host -Prompt "Create repository on github? 1 - yes, 2 - no"
-If ($AnswerRepo -eq "1") {
-$result =Invoke-RestMethod -Headers $Headers -Uri https://api.github.com/user/repos -Body $Body -Method post | Format-Wide -Property clone_url -Column 1 | out-string
-#| Select-String -Pattern "https://github.com/*"
-$result = $result.trim()
-#Read path to your folder with your projects
+#
+$a = git ls-remote --exit-code https://github.com/designofhumanity/$ProjectName 2>&1
+if ($a.Exception)
+ {
+    $AnswerRepo =Read-Host -Prompt "Create repository on github? 1 - yes, 2 - no"
+    If ($AnswerRepo -eq "1") {
+      $result =Invoke-RestMethod -Headers $Headers -Uri https://api.github.com/user/repos -Body $Body -Method post | Format-Wide -Property clone_url -Column 1 | out-string
+      #| Select-String -Pattern "https://github.com/*"
+      $result = $result.trim()
+      #Read path to your folder with your projects
+    }
 }
 $configurationContent =Get-Content $PSScriptRoot\configuration.conf
 $projects_dir = $configurationContent -replace "projects_dir=",""
+$full_path = "$projects_dir\$ProjectName"
 Set-Location -Path $projects_dir
-If (-Not (Test-Path .\$ProjectName))
+If (-Not (Test-Path $projects_dir\$ProjectName))
 {
-  New-Item .\$ProjectName -type directory | out-null
+  New-Item $projects_dir\$ProjectName -type directory | out-null
 }
 #basic direcotry structure
-If (-Not (Test-Path .\$ProjectName\css))
+If (-Not (Test-Path $full_path\css))
 {
-  New-Item .\$ProjectName\css -type directory | out-null
+  New-Item $full_path\css -type directory | out-null
 }
-If (-Not (Test-Path .\$ProjectName\js))
+If (-Not (Test-Path $full_path\js))
 {
-  New-Item .\$ProjectName\js -type directory | out-null
+  New-Item $full_path\js -type directory | out-null
 }
-Set-Location -Path .\$ProjectName
-If (-Not (Test-Path .\node_modules))
+If (-Not (Test-Path $full_path\node_modules))
 {
 $AnswerGulp =Read-Host -Prompt "Install gulp? 1 - yes, 2 - no"
 if ($AnswerGulp -eq "1") {
-npm i gulp -save-dev -silent
+Set-Location $full_path;npm i gulp -save-dev -silent
 }
 }
-If (-Not (Test-Path .\node_modules\browser-sync))
+If (-Not (Test-Path $projects_dir\node_modules\browser-sync))
 {
 if ($AnswerGulp -eq "1") {
-npm i browser-sync -save-dev -silent
+Set-Location $full_path;npm i browser-sync -save-dev -silent
 }
 }
-If (-Not ( Test-Path ".\gulpfile.js" ))
+If (-Not ( Test-Path "$full_path\gulpfile.js" ))
 {
   if ($AnswerGulp -eq "1") {
-New-Item .\gulpfile.js -ItemType "file" | out-null
+New-Item $full_path\gulpfile.js -ItemType "file" | out-null
 $receivedContent = Get-Content -Path $PSScriptRoot\__template\_gulpfile.js
-Set-Content .\gulpfile.js -Value $receivedContent
+Set-Content $full_path\gulpfile.js -Value $receivedContent
 }
 }
-If (-Not ( Test-Path ".\index.html" ))
+If (-Not ( Test-Path "$full_path\index.html" ))
 {
-New-Item .\index.html -ItemType "file" | out-null
+New-Item $full_path\index.html -ItemType "file" | out-null
 }
 #work/_template/index.html
 #$receivedContent = Get-Content -Path $PSScriptRoot\__template\_index.html
 #$receivedContent =iwr -uri https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/index.html
 $receivedContent =Get-Content -Path $PSScriptRoot\__template\_index.html
 if ($AnswerRepo -eq "1") {
-  Copy-Item $PSScriptRoot\__template\css\_bootstrap.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
-  $receivedContent = addToHTML -pattern "<body>" -NewString "`t`t`t`t<p>Created repo on <a href='$result'></a>github</p>" -isreplace $FALSE -content $receivedContent
+  Copy-Item $PSScriptRoot\__template\css\_bootstrap.css $full_path\css\bootstrapGridSystem.css
+  $receivedContent = addToHTML -pattern "<body>" -NewString "`t`t`t`t<p>Created repo on <a href='$result'>github</a></p>" -isreplace $FALSE -content $receivedContent
 }
 #$AnswerScript =Read-Host -Prompt "Add empty script.js? 1 - yes, 2 - no";
 #If ($AnswerScript -eq "1")
 #{
-  If (-Not ( Test-Path "$projects_dir\$ProjectName\js\main.js" ))
+  If (-Not ( Test-Path "$full_path\js\main.js" ))
   {
-    New-Item .\js\main.js -ItemType "file" | out-null;
+    New-Item $full_path\js\main.js -ItemType "file" | out-null;
   }
 $AnswerJquery =Read-Host -Prompt "Add jQuery.js? 1 - yes, 2 - no"
 if ($AnswerJquery -eq "1") {
@@ -142,7 +147,7 @@ if ($AnswerJquery -eq "1") {
   $newArray.Add($line) > $null
   #вставляем внешние стили
   #but we need to copy this file from template dir to project directory
-  #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+  #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $full_path\css\bootstrapGridSystem.css
   #break from cycle e.g. first link
   $once = $FALSE
   } else {
@@ -155,7 +160,7 @@ $AnswerBootstrapGridSystem =Read-Host -Prompt "Add bootstrapGridSystem.css? 1 - 
 if ($AnswerBootstrapGridSystem -eq "1") {
   if ($line -match "<link.*" -And $once) {
   $newArray.Add("`t`t`t`t<link rel=""stylesheet"" href=""css/bootstrapGridSystem.css"">") > $null
-  Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+  Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $full_path\css\bootstrapGridSystem.css
   $receivedContent = addToHTML -pattern "<link.*" -NewString "`t`t`t`t<link rel=""stylesheet"" href=""css/bootstrapGridSystem.css"">" -isreplace $FALSE -content $receivedContent
 }
 #before write into index.html
@@ -172,7 +177,7 @@ if ($AnswerBootstrapGridSystem -eq "1") {
 #  #$newArray.Add($line) > $null
 #  #вставляем внешние стили
 #  #but we need to copy this file from template dir to project directory
-#  #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+#  #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $full_path\css\bootstrapGridSystem.css
 #  #break from cycle e.g. first link
 #  $once = $FALSE
 #  } else {
@@ -180,25 +185,24 @@ if ($AnswerBootstrapGridSystem -eq "1") {
 #  }
 #  }
 #  $receivedContent = $newArray
-Write-Host "Before addToHTML call!"
 $receivedContent = addToHTML -Pattern "<title>" -NewString "`t`t`t`t<title>$ProjectName</title>" -isreplace $TRUE -content $receivedContent
-Set-Content .\index.html -Value $receivedContent
+Set-Content $full_path\index.html -Value $receivedContent
 }
-If (-Not ( Test-Path "$projects_dir\$ProjectName\css\main.css" ))
+If (-Not ( Test-Path "$full_path\css\main.css" ))
 {
-  New-Item .\css\main.css -ItemType "file" | out-null;
+  New-Item $full_path\css\main.css -ItemType "file" | out-null;
 }
 #npm init
 #HOW GET Browser-sync version?
 #LIcense
-If (-Not (Test-Path "$projects_dir\$ProjectName\package.json"))
+If (-Not (Test-Path "$full_path\package.json"))
 {
-  New-Item .\package.json -ItemType "file" | out-null
+  New-Item $full_path\package.json -ItemType "file" | out-null
   $gulpVersionStr = gulp -version;
   $arr = $gulpVersionStr -split(" ", "")
   $arr.GetType()
 $gulpVersion =$arr[3]
-  Set-Content .\package.json -Value @"
+  Set-Content $full_path\package.json -Value @"
   {
     "name": "$ProjectName",
     "version": "1.0.0",
@@ -218,28 +222,30 @@ $gulpVersion =$arr[3]
 "@
 } #else npm init
 If ($AnswerRepo -eq "1") {
-New-Item .\.gitignore -ItemType "file" | out-null
+New-Item $full_path\.gitignore -ItemType "file" | out-null
 #Get-Content from template
 $receivedContent = Get-Content -Path $PSScriptRoot\__template\_.gitignore
-Set-Content .\.gitignore -Value $receivedContent
-git init
-git add .
+Set-Content $full_path\.gitignore -Value $receivedContent
+If (-Not ( Test-Path "$full_path\.git" )) {
+  set-location $full_path;git init
+}
+set-location $full_path;git add .
 git commit -m "First project commit"
 git remote add currentRepo $result
 git push currentRepo master
 }
 #open favorite text editor (I am using ATOM)
-atom .
-ii .
-If ($AnswerGulp -eq "1" -OR (Test-Path "$projects_dir\$ProjectName\gulpfile.js") ) {
+atom $full_path
+ii $full_path
+If ($AnswerGulp -eq "1" -OR (Test-Path "$full_path\gulpfile.js") ) {
 start-process powershell.exe -argument '-nologo -noprofile -executionpolicy bypass -command gulp watch'
 }
 Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU3cz/C5RKNTUJLdPjjLrdRXWr
-# f9OgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUMHsbxELN4hBnY10muXEhv9vL
+# 8VigggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -260,11 +266,11 @@ Set-Location $projects_dir
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFDbCp9dINhr2l4dG1ye8PrKv6jZ0MA0GCSqG
-# SIb3DQEBAQUABIIBAIx0tewfJX5tgYKAw26FVuxynNz06ENqzvXle+HiftHjoOYh
-# bRPBwALk/VeV5DkG5vxFBeRJ65L3zx06LR7HdGdHJmyJZF3IDJ5Zf3ejlgkbjCux
-# NvV506mTKncS3v9OHya4uYGPX9bu5JNsQmKq5oQAyCdPnZdwihusvQSwDBia0yxv
-# D+h9kOjdBNdb2AIFWFc14kpPeiN4jgWgH4XidAK8pQcd4a21dYUnG2lfDYuyOZVW
-# dhb+1w2T51XXOBn2qW26tK/+ZjfNsL8l2i+qzXEusBG4tAmV49qcpLIMAVmSrsRf
-# TqMspX6lgYhmRT3m45KFjsOCFxLoefyj9CDDfDQ=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFLXqnpmSSbhuMt7AkBgtKQIyPF6SMA0GCSqG
+# SIb3DQEBAQUABIIBADHAdM3qQF2EkRF0k400z4k0IJN0vkiRrVVZpHcsCIPVzeIZ
+# +XJJh3se9MB9JGyWFoygLd4TU7v15QUCAVPOmb7X/AfB9/70/DFJOLo6IXIBXs1g
+# /yoW71ePK+0nqyJYcDdMHzcx2pZaJnOMgvvPXOvnDqFR1FI2tkL/hcKSA0L0DC/j
+# FRs4exWbJLdOo+jnPaSyadoLh425RGUsaw6k3Q183mvrnWVi3ygxuRY7OI486FOt
+# 7BLIXQLONq4fzsrSNUulb6FkaVbEvr373T2Lx7Q7d9fpgwAdqMn1V9HxnX20ZdzX
+# N034yI3hT+6qHAPeS2TTCmAhvVjucpwLxpkzxdw=
 # SIG # End signature block
