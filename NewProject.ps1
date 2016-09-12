@@ -1,22 +1,19 @@
-function addToHTML
+param([string]$name="", [string]$desc="")
+#addToHTML5Boilerplate - add tag style,script to HTML5 boilerplate
+function addToHTML5Boilerplate
 {
   param( [string]$pattern, [string]$NewString, [boolean]$isreplace, [System.Collections.ArrayList]$content )
-  Write-Host "Inside addToHTML"
   $once = $TRUE
   $i = 0
   $newArray = New-Object System.Collections.ArrayList
   foreach ($line in $content) {
     $i++
-    #находим тег линк
+    #find first patter line
     if ($line -match $pattern -And $once) {
       $newArray.Add($NewString) > $null
       if(-Not $isreplace -eq $TRUE) {
         $newArray.Add($line) > $null
       }
-      #вставляем внешние стили
-      #but we need to copy this file from template dir to project directory
-      #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $full_path\css\bootstrapGridSystem.css
-      #break from cycle e.g. first link
       $once = $FALSE
     } else {
       $newArray.Add($line) > $null
@@ -29,20 +26,26 @@ $dateDiff = (new-timespan -start (get-date) -end $endData)
 If ($dateDiff.days -lt -7) {
 Write-Host "HTML5 boilerplate index.html outdated file to $dateDiff.days days"
 $AnswerUpdate =Read-Host -Prompt 'Update HTML5 boilerplate templates from github? 1 - Yes, else - no'
-#$PSScriptRoot\__template\css\bootstrapGridSystem.css
-#$PSScriptRoot\__template\_gulpfile.js
 if ($AnswerUpdate -eq "1") {
-#If ($dateDiff.days -gt 7) {.... update html5-bolerplate
   Invoke-WebRequest "https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/index.html" -outfile $PSScriptRoot\__template\_index.html
   $endData = (get-item .\__template\_index.html).LastWriteTime
   $dateDiff = (new-timespan -start (get-date) -end $endData).days
   Write-Host "HTML5 boilerplate index.html days beetween", $dateDiff
 }
 }
-#1) Итак сначала читаем с клавиатуры название проекта
-$ProjectName=Read-Host -Prompt 'Input project name'
-#... описание проекта
-$Description=Read-Host -Prompt 'Input project description'
+if (-Not $name) {
+  #1)first read project name from user
+  $ProjectName=Read-Host -Prompt 'Input project name'
+} else {
+  Write-Host "ProjectName=$name"
+  $ProjectName =$name
+}
+if (-Not $name) {
+  $Description=Read-Host -Prompt 'Input project description'
+} else {
+  Write-Host "Description=$desc"
+  $Description =$desc
+}
 #Cоздадим репозиторий
 #Сервеная сторона
 #Когда пользователь хочет отправить the server authentication credentials it may use the Authorization field.
@@ -125,7 +128,7 @@ New-Item $full_path\index.html -ItemType "file" | out-null
 $receivedContent =Get-Content -Path $PSScriptRoot\__template\_index.html
 if ($AnswerRepo -eq "1") {
   Copy-Item $PSScriptRoot\__template\css\_bootstrap.css $full_path\css\bootstrapGridSystem.css
-  $receivedContent = addToHTML -pattern "<body>" -NewString "`t`t`t`t<p>Created repo on <a href='$result'>github</a></p>" -isreplace $FALSE -content $receivedContent
+  $receivedContent = addToHTML5Boilerplate -pattern "<body>" -NewString "`t`t`t`t<p>Created repo on <a href='$result'>github</a></p>" -isreplace $FALSE -content $receivedContent
 }
 #$AnswerScript =Read-Host -Prompt "Add empty script.js? 1 - yes, 2 - no";
 #If ($AnswerScript -eq "1")
@@ -161,7 +164,7 @@ if ($AnswerBootstrapGridSystem -eq "1") {
   if ($line -match "<link.*" -And $once) {
   $newArray.Add("`t`t`t`t<link rel=""stylesheet"" href=""css/bootstrapGridSystem.css"">") > $null
   Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $full_path\css\bootstrapGridSystem.css
-  $receivedContent = addToHTML -pattern "<link.*" -NewString "`t`t`t`t<link rel=""stylesheet"" href=""css/bootstrapGridSystem.css"">" -isreplace $FALSE -content $receivedContent
+  $receivedContent = addToHTML5Boilerplate -pattern "<link.*" -NewString "`t`t`t`t<link rel=""stylesheet"" href=""css/bootstrapGridSystem.css"">" -isreplace $FALSE -content $receivedContent
 }
 #before write into index.html
 #$once = $TRUE
@@ -185,7 +188,7 @@ if ($AnswerBootstrapGridSystem -eq "1") {
 #  }
 #  }
 #  $receivedContent = $newArray
-$receivedContent = addToHTML -Pattern "<title>" -NewString "`t`t`t`t<title>$ProjectName</title>" -isreplace $TRUE -content $receivedContent
+$receivedContent = addToHTML5Boilerplate -Pattern "<title>" -NewString "`t`t`t`t<title>$ProjectName</title>" -isreplace $TRUE -content $receivedContent
 Set-Content $full_path\index.html -Value $receivedContent
 }
 If (-Not ( Test-Path "$full_path\css\main.css" ))
@@ -244,8 +247,8 @@ Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUMHsbxELN4hBnY10muXEhv9vL
-# 8VigggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUa+EedHg1DQEqnBFgpFJpBcJC
+# 0m+gggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -266,11 +269,11 @@ Set-Location $projects_dir
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFLXqnpmSSbhuMt7AkBgtKQIyPF6SMA0GCSqG
-# SIb3DQEBAQUABIIBADHAdM3qQF2EkRF0k400z4k0IJN0vkiRrVVZpHcsCIPVzeIZ
-# +XJJh3se9MB9JGyWFoygLd4TU7v15QUCAVPOmb7X/AfB9/70/DFJOLo6IXIBXs1g
-# /yoW71ePK+0nqyJYcDdMHzcx2pZaJnOMgvvPXOvnDqFR1FI2tkL/hcKSA0L0DC/j
-# FRs4exWbJLdOo+jnPaSyadoLh425RGUsaw6k3Q183mvrnWVi3ygxuRY7OI486FOt
-# 7BLIXQLONq4fzsrSNUulb6FkaVbEvr373T2Lx7Q7d9fpgwAdqMn1V9HxnX20ZdzX
-# N034yI3hT+6qHAPeS2TTCmAhvVjucpwLxpkzxdw=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFK1KRyaTWr/5yc+ujLCps8oT3RxuMA0GCSqG
+# SIb3DQEBAQUABIIBAHRmkv8DU8kN17JgbgwH9d3LHmAhX9pBERCC15L6Bc/SWiXg
+# i9JqswMADo9c2WIK5GLXseYgdaAHd8bAeewsbJ2mSPgC3Od7p7WaYQRVJztQ6HlY
+# uVhVhnzbHdpRkz5G3k5dPMekdEbEfizwQ10ZnU1pr5C9x/ho9WR/oyRgIb0fLKFN
+# hV81s0U3tZ3UJQzLahQTgoV7xbmXk+kuDhaMmzTDQxwbPqC7nlbaXyhkDYqQjSyI
+# yfTKyEzjQYYdAbLSZHiKPxlnYS0LnugM56r40VpcPH0kf1BUOc8/07oqUM33xEgT
+# YKWgoyA67FSF5oX/w7AsRJ7pAtFCxbyDIvQPNpc=
 # SIG # End signature block
