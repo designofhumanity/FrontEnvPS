@@ -186,6 +186,10 @@ if ($AnswerBootstrapGridSystem -eq "1") {
 }
 Set-Content .\index.html -Value $receivedContent
 }
+If (-Not ( Test-Path "$projects_dir\$ProjectName\css\main.css" ))
+{
+  New-Item .\css\main.css -ItemType "file" | out-null;
+}
 #npm init
 #HOW GET Browser-sync version?
 #LIcense
@@ -236,8 +240,8 @@ Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU14Whwdji5aLMtI4YysD1J4OM
-# k2CgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUv8d2/SMDWyyqCtfxze6RbiQT
+# kX+gggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -258,11 +262,11 @@ Set-Location $projects_dir
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFJS7853ZWH1Ozjy4UU0K6J6ZybgfMA0GCSqG
-# SIb3DQEBAQUABIIBAEVK+awzOO1BUYHnsT529RxnCrJ13sqhBpcRpfUQcBvvJS0O
-# 3v4ByYwL+HuEXrKUhsbydoGry6Kv7fl5rIKx03a1CfR1ZgjdPuy7q6uwT6Nvq8xo
-# Yu1bTAPitWVNhL+WO2T8zN+JzT1A+Fbre2Lchisd8jrxk7i4kIe8xOnHhhJaZ96Z
-# 7uvMBDsUlTTyGN4S23gz+C0phl+GHPMXC2y8INq8O5K02exhmILuOtsGrUsybgrL
-# +K2IU6hl+LzTy7RuQH3VjFwMK0+hX3lnAp3ijzqDqn9sRiSc2htimYlxrH70gRyv
-# DGv7O+0HF5TROQFhCCeHuSLc6Vtjrc1bpQIJuek=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFDfBEhavM6yeMD2wj9ZbhF/NJtTHMA0GCSqG
+# SIb3DQEBAQUABIIBAEFakt5s7EJMuBaQ7DEPw4Chgxzr8XltZ8/Vt1pKAlBCC6Qv
+# rdSLhdev3JDxp3OU8/zaSvlaojYNwXYGe2WH7WWisYLJ101KZWSUlu06rDiGGSLD
+# coBUsSAT/TLKUTjy56n23sgj9h/WICplt3W48+tHf1NDyTU5TMimpGGYq5Amb115
+# C44PkoKMdtpVb3dMoCMPha3egcNR+6oW7WbSnWyN0sVIR3OP/w/MBJDHrrrNk4SR
+# A1WzbJqL740gl2hjFWDbNJ8W44NcJE4UgsFPEzRqiiToGbmfTFce45PIZa3LhsVz
+# Qy2IPcu0naCUdUdONl4Gb+5C2kDOMe7vsmmCbFo=
 # SIG # End signature block
