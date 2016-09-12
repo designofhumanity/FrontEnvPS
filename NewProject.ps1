@@ -1,3 +1,29 @@
+function addToHTML
+{
+  param( [string]$pattern, [string]$NewString, [boolean]$isreplace, [System.Collections.ArrayList]$content )
+  Write-Host "Inside addToHTML"
+  $once = $TRUE
+  $i = 0
+  $newArray = New-Object System.Collections.ArrayList
+  foreach ($line in $content) {
+    $i++
+    #находим тег линк
+    if ($line -match $pattern -And $once) {
+      $newArray.Add($NewString) > $null
+      if(-Not $isreplace -eq $TRUE) {
+        $newArray.Add($line) > $null
+      }
+      #вставляем внешние стили
+      #but we need to copy this file from template dir to project directory
+      #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+      #break from cycle e.g. first link
+      $once = $FALSE
+    } else {
+      $newArray.Add($line) > $null
+    }
+  }
+  return $newArray
+}
 $endData = (get-item $PSScriptRoot\__template\_index.html).LastWriteTime
 $dateDiff = (new-timespan -start (get-date) -end $endData)
 If ($dateDiff.days -lt -7) {
@@ -87,58 +113,22 @@ Set-Content .\gulpfile.js -Value $receivedContent
 If (-Not ( Test-Path ".\index.html" ))
 {
 New-Item .\index.html -ItemType "file" | out-null
+}
 #work/_template/index.html
 #$receivedContent = Get-Content -Path $PSScriptRoot\__template\_index.html
 #$receivedContent =iwr -uri https://raw.githubusercontent.com/h5bp/html5-boilerplate/master/src/index.html
 $receivedContent =Get-Content -Path $PSScriptRoot\__template\_index.html
 if ($AnswerRepo -eq "1") {
-  $once = $TRUE
-  $i = 0
-  $newArray = New-Object System.Collections.ArrayList
-  foreach ($line in $receivedContent) {
-  $i++
-  #находим тег линк
-  if ($line -match "<body>" -And $once) {
-      $newArray.Add($line) > $null
-    $newArray.Add("`t`t`t`t<p>Created repo on <a href='$result'></a>github</p>") > $null
-  #вставляем внешние стили
-  #but we need to copy this file from template dir to project directory
-  Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
-  #break from cycle e.g. first link
-  $once = $FALSE
-  } else {
-  $newArray.Add($line) > $null
-  }
-  }
-  $receivedContent = $newArray
+  Copy-Item $PSScriptRoot\__template\css\_bootstrap.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+  $receivedContent = addToHTML -pattern "<body>" -NewString "`t`t`t`t<p>Created repo on <a href='$result'></a>github</p>" -isreplace $FALSE -content $receivedContent
 }
-$AnswerScript =Read-Host -Prompt "Add empty script.js? 1 - yes, 2 - no";
-If ($AnswerScript -eq "1")
-{
-  If (-Not ( Test-Path "$projects_dir\$ProjectName\js\script.js" ))
+#$AnswerScript =Read-Host -Prompt "Add empty script.js? 1 - yes, 2 - no";
+#If ($AnswerScript -eq "1")
+#{
+  If (-Not ( Test-Path "$projects_dir\$ProjectName\js\main.js" ))
   {
-    New-Item .\js\script.js -ItemType "file" | out-null;
+    New-Item .\js\main.js -ItemType "file" | out-null;
   }
-  $once = $TRUE
-  $i = 0
-  $newArray = New-Object System.Collections.ArrayList
-  foreach ($line in $receivedContent) {
-  $i++
-  #находим тег линк
-  if ($line -match "</body>" -And $once) {
-  $newArray.Add("`t`t`t`t<script src=""js/script.js""></script>") > $null
-  $newArray.Add($line) > $null
-  #вставляем внешние стили
-  #but we need to copy this file from template dir to project directory
-  #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
-  #break from cycle e.g. first link
-  $once = $FALSE
-  } else {
-  $newArray.Add($line) > $null
-  }
-  }
-  $receivedContent = $newArray
-}
 $AnswerJquery =Read-Host -Prompt "Add jQuery.js? 1 - yes, 2 - no"
 if ($AnswerJquery -eq "1") {
   $once = $TRUE
@@ -163,27 +153,35 @@ if ($AnswerJquery -eq "1") {
 }
 $AnswerBootstrapGridSystem =Read-Host -Prompt "Add bootstrapGridSystem.css? 1 - yes, 2 - no"
 if ($AnswerBootstrapGridSystem -eq "1") {
-  $once = $TRUE
-  $i = 0
-  $newArray = New-Object System.Collections.ArrayList
-  foreach ($line in $receivedContent) {
-  $i++
-  #находим тег линк
   if ($line -match "<link.*" -And $once) {
-    #вставляем его и после него
-  $newArray.Add($line) > $null
-  #вставляем внешние стили
   $newArray.Add("`t`t`t`t<link rel=""stylesheet"" href=""css/bootstrapGridSystem.css"">") > $null
-  #but we need to copy this file from template dir to project directory
   Copy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
-  #break from cycle e.g. first link
-  $once = $FALSE
-  } else {
-  $newArray.Add($line) > $null
-  }
-  }
-  $receivedContent = $newArray
+  $receivedContent = addToHTML -pattern "<link.*" -NewString "`t`t`t`t<link rel=""stylesheet"" href=""css/bootstrapGridSystem.css"">" -isreplace $FALSE -content $receivedContent
 }
+#before write into index.html
+#$once = $TRUE
+#  $i = 0
+#  $newArray = New-Object System.Collections.ArrayList
+#  foreach ($line in $receivedContent) {
+#  $i++
+#  #find last tag </body>
+#  if ($line -match "<title>" -And $once) {
+#    #first add script tag
+#  $newArray.Add("`t`t`t`t<title>$ProjectName</title>") > $null
+#  #... and then close </body>
+#  #$newArray.Add($line) > $null
+#  #вставляем внешние стили
+#  #but we need to copy this file from template dir to project directory
+#  #Local jQuery copyCopy-Item $PSScriptRoot\__template\css\bootstrapGridSystem.css $projects_dir\$ProjectName\css\bootstrapGridSystem.css
+#  #break from cycle e.g. first link
+#  $once = $FALSE
+#  } else {
+#  $newArray.Add($line) > $null
+#  }
+#  }
+#  $receivedContent = $newArray
+Write-Host "Before addToHTML call!"
+$receivedContent = addToHTML -Pattern "<title>" -NewString "`t`t`t`t<title>$ProjectName</title>" -isreplace $TRUE -content $receivedContent
 Set-Content .\index.html -Value $receivedContent
 }
 If (-Not ( Test-Path "$projects_dir\$ProjectName\css\main.css" ))
@@ -240,8 +238,8 @@ Set-Location $projects_dir
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUv8d2/SMDWyyqCtfxze6RbiQT
-# kX+gggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU3cz/C5RKNTUJLdPjjLrdRXWr
+# f9OgggNCMIIDPjCCAiqgAwIBAgIQz/RnNYpemY5NuvIzjFmVzzAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAyMTgxNTU3MjBaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANpqT6Qt
@@ -262,11 +260,11 @@ Set-Location $projects_dir
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEM/0ZzWKXpmOTbry
 # M4xZlc8wCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFDfBEhavM6yeMD2wj9ZbhF/NJtTHMA0GCSqG
-# SIb3DQEBAQUABIIBAEFakt5s7EJMuBaQ7DEPw4Chgxzr8XltZ8/Vt1pKAlBCC6Qv
-# rdSLhdev3JDxp3OU8/zaSvlaojYNwXYGe2WH7WWisYLJ101KZWSUlu06rDiGGSLD
-# coBUsSAT/TLKUTjy56n23sgj9h/WICplt3W48+tHf1NDyTU5TMimpGGYq5Amb115
-# C44PkoKMdtpVb3dMoCMPha3egcNR+6oW7WbSnWyN0sVIR3OP/w/MBJDHrrrNk4SR
-# A1WzbJqL740gl2hjFWDbNJ8W44NcJE4UgsFPEzRqiiToGbmfTFce45PIZa3LhsVz
-# Qy2IPcu0naCUdUdONl4Gb+5C2kDOMe7vsmmCbFo=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFDbCp9dINhr2l4dG1ye8PrKv6jZ0MA0GCSqG
+# SIb3DQEBAQUABIIBAIx0tewfJX5tgYKAw26FVuxynNz06ENqzvXle+HiftHjoOYh
+# bRPBwALk/VeV5DkG5vxFBeRJ65L3zx06LR7HdGdHJmyJZF3IDJ5Zf3ejlgkbjCux
+# NvV506mTKncS3v9OHya4uYGPX9bu5JNsQmKq5oQAyCdPnZdwihusvQSwDBia0yxv
+# D+h9kOjdBNdb2AIFWFc14kpPeiN4jgWgH4XidAK8pQcd4a21dYUnG2lfDYuyOZVW
+# dhb+1w2T51XXOBn2qW26tK/+ZjfNsL8l2i+qzXEusBG4tAmV49qcpLIMAVmSrsRf
+# TqMspX6lgYhmRT3m45KFjsOCFxLoefyj9CDDfDQ=
 # SIG # End signature block
