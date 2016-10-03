@@ -1,5 +1,6 @@
 <h1>Windows frontend workflow</h1>
-<h2>Requirements: Node Package Manager, windows powershell, Atom<h2>
+<h2>Requirements</h2>
+<p>Node Package Manager, windows powershell, Atom</p>
 <p>Powershell script that set-up frontend development environment</p>
 <ol>
 <li>Install gulp if not exist (node_modules folders)</li>
