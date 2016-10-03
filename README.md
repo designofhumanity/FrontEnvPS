@@ -1,5 +1,5 @@
-# Windows frontend workflow
-#Requirements: Node Package Manager, windows powershell, Atom
+<h1>Windows frontend workflow</h1>
+<h2>Requirements: Node Package Manager, windows powershell, Atom<h2>
 #Powershell script that set-up frontend development environment
 #1) Install gulp if not exist (node_modules folders)
 #2) Install browser-sync - gulp module that automaticaly refresh page if html,css,js are changed.
