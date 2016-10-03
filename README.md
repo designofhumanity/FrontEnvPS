@@ -11,5 +11,5 @@
 <p>lazy frontender, one script and done, one click everything is ready, frontend windows workflow</p>
 <p>In the future basic template like grid systems opportunity to choose gird system and automaticaly add it to link tag, frame works, sass,less compilers and so on</p>
 <h2>For index.html using HTML5 Boilerplate</h2>
-#Update HTML5 Boilerplate once a week
-#
+<p>Update HTML5 Boilerplate once a week</p>
+
